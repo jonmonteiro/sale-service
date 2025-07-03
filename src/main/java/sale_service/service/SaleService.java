@@ -25,14 +25,14 @@ public class SaleService {
         SaleProduct savedProduct = productRepository.save(new SaleProduct(productDTO));
         
         String productJson = objectMapper.writeValueAsString(savedProduct);
-        kafkaTemplate.send("auth-topic", productJson);
+        kafkaTemplate.send("product-topic", productJson);
         
         return savedProduct;
     }
 
     public void deleteProduct(Long id) throws JsonProcessingException {
         String delete = objectMapper.writeValueAsString(new ProductDTO(id, null, null, null));
-        kafkaTemplate.send("auth-topic", delete);
+        kafkaTemplate.send("product-topic", delete);
         
         productRepository.deleteById(id);
     }
@@ -46,7 +46,7 @@ public class SaleService {
                 SaleProduct updatedProduct = productRepository.save(product);
                 try {
                     String productJson = objectMapper.writeValueAsString(updatedProduct);
-                    kafkaTemplate.send("auth-topic", productJson);
+                    kafkaTemplate.send("product-topic", productJson);
                     return updatedProduct;
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
